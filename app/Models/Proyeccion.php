@@ -21,6 +21,6 @@ class Proyeccion extends Model
     }
 
     public function entradas() {
-        return $this->entradas(Entrada::class);
+        return $this->hasMany(Entrada::class);
     }
 }

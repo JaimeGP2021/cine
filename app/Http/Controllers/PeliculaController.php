@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePeliculaRequest;
-use App\Http\Requests\UpdatePeliculaRequest;
 use App\Models\Pelicula;
+use Illuminate\Http\Request;
 
 class PeliculaController extends Controller
 {
@@ -13,7 +12,7 @@ class PeliculaController extends Controller
      */
     public function index()
     {
-        //
+        return view('peliculas.index', ['peliculas'=>Pelicula::all()]);
     }
 
     /**
@@ -21,15 +20,23 @@ class PeliculaController extends Controller
      */
     public function create()
     {
-        //
+        return view('peliculas.create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePeliculaRequest $request)
+    public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'titulo' => 'required|string|max:255',
+        ], [
+            'titulo.required' => 'El título es obligatorio.',
+            'titulo.max' => 'El título debe contener menos de 255 caracteres.',
+        ]);
+        Pelicula::create($validated);
+        session()->flash('exito', 'Libro creado correctamente.');
+        return redirect()->route('peliculas.index');
     }
 
     /**
@@ -37,7 +44,7 @@ class PeliculaController extends Controller
      */
     public function show(Pelicula $pelicula)
     {
-        //
+        return view('peliculas.show', ['pelicula'=>$pelicula]);
     }
 
     /**
@@ -45,15 +52,26 @@ class PeliculaController extends Controller
      */
     public function edit(Pelicula $pelicula)
     {
-        //
+        return view('peliculas.edit', [
+            'pelicula'=>$pelicula
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePeliculaRequest $request, Pelicula $pelicula)
+    public function update(Request $request, Pelicula $pelicula)
     {
-        //
+        $validated = $request->validate([
+            'titulo' => 'required|string|max:255',
+        ], [
+            'titulo.required' => 'El título es obligatorio.',
+            'titulo.max' => 'El título debe contener menos de 255 caracteres.',
+        ]);
+        $pelicula->fill($validated);
+        $pelicula->save();
+        session()->flash('exito', 'pelicula modificada correctamente.');
+        return redirect()->route('peliculas.index');
     }
 
     /**
@@ -61,6 +79,7 @@ class PeliculaController extends Controller
      */
     public function destroy(Pelicula $pelicula)
     {
-        //
+        $pelicula->delete();
+        return redirect()->route('pel$peliculas.index');
     }
 }
