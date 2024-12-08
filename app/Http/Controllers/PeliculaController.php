@@ -79,7 +79,11 @@ class PeliculaController extends Controller
      */
     public function destroy(Pelicula $pelicula)
     {
+        foreach ($pelicula->proyecciones as $proyeccion)
+        if ($proyeccion->entradas->count() > 0){
+            return redirect()->route('peliculas.index');
+        }
         $pelicula->delete();
-        return redirect()->route('pel$peliculas.index');
+        return redirect()->route('peliculas.index');
     }
 }
